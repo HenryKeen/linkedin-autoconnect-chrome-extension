@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
         };
 
         var isOnSearchPage = function () {
-            return (strContains(tab.url, "linkedin.com/search/results"));
+            return (strContains(tab.url, "linkedin.com/search/results/people"));
         };
 
         var isOnPymkPage = function () {

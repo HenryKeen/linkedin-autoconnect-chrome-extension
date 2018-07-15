@@ -22,7 +22,7 @@ var addPeopleFromSearchPage = function () {
 
     var alreadyInvited = 0;
 
-    var buttonsFromNewInterface = document.querySelectorAll('button.search-result__actions--primary.m5:enabled');
+    var buttonsFromNewInterface = document.querySelectorAll('button.search-result__actions--primary.m5:enabled:not(.message-anywhere-button)');
 
     var clickSendNowButtonIfAvailable = function () {
         var buttonSendNow = document.querySelector('div.send-invite__actions > button.button-primary-large.ml1:enabled');
@@ -36,15 +36,12 @@ var addPeopleFromSearchPage = function () {
         }
     };
 
-    var isWorthClicking = function (item){
+    var isRecruiter = function (item){
 
         var resultHtml = item.parentElement.parentElement.parentElement.innerHTML
         if(strContains(resultHtml,'recruit'))// this needs some work
         {
-            return false;
-        }
-        if(item.querySelectorAll('message-anywhere-button').length > 0)
-        {
+            console.error("recruiter")
             return false;
         }
         return true;
@@ -56,7 +53,7 @@ var addPeopleFromSearchPage = function () {
             setTimeout(function () {
                 if (running) {
                     
-                    if(isWorthClicking(item))
+                    if(isRecruiter(item))
                     {
                         clickSendNowButtonIfAvailable();
                         item.focus();
@@ -64,9 +61,10 @@ var addPeopleFromSearchPage = function () {
                         item.setAttribute("disabled", "true");
                         item['innerText'] = "Invite Sent";
                         clickSendNowButtonIfAvailable();
+                        console.log(item);
                     }
                     else{
-                        item['innerText'] = (strContains(resultHtml,'recruit'))?"recruiter":"something else not worth clicking for";
+                        item['innerText'] = "recruiter";
                     }
                 }
             }, alreadyInvited++ * delayBetweenClicks);
