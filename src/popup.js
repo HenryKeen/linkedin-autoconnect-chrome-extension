@@ -13,11 +13,11 @@ document.addEventListener('DOMContentLoaded', function () {
         };
 
         var isOnSearchPage = function () {
-            return (strContains(tab.url, "linkedin.com/vsearch/p") || strContains(tab.url, "linkedin.com/search/results/people"));
+            return (strContains(tab.url, "linkedin.com/search/results"));
         };
 
         var isOnPymkPage = function () {
-            return (strContains(tab.url, "linkedin.com/people/pymk") || strContains(tab.url, "linkedin.com/mynetwork"));
+            return (strContains(tab.url, "linkedin.com/mynetwork"));
         };
 
         var openUrlOnCurrentTab = function (url) {

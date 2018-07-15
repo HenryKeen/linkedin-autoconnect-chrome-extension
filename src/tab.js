@@ -22,41 +22,52 @@ var addPeopleFromSearchPage = function () {
 
     var alreadyInvited = 0;
 
-    var buttonsFromOldInterface = document.querySelectorAll('.primary-action-button');
-
     var buttonsFromNewInterface = document.querySelectorAll('button.search-result__actions--primary.m5:enabled');
 
     var clickSendNowButtonIfAvailable = function () {
-        var buttonSendNow = document.querySelector('div.send-invite__actions > button.button-primary-large.ml1');
+        var buttonSendNow = document.querySelector('div.send-invite__actions > button.button-primary-large.ml1:enabled');
+        var buttonCancel = document.querySelector('div.send-invite__actions > send-invite__cancel-btn');
         if (buttonSendNow) {
             buttonSendNow.click();
         }
+        else if(buttonCancel)
+        {
+            buttonCancel.click();
+        }
     };
 
-    if (buttonsFromOldInterface.length > 0) {
-        buttonsFromOldInterface.forEach(function (item) {
-            if (!arrayContains(extractProfileId(item.getAttribute("href")), buttonsClicked)) {
-                setTimeout(function () {
-                    if (running) {
-                        item.focus();
-                        item.click();
-                        buttonsClicked.push(extractProfileId(item.getAttribute("href")));
-                        sessionStorage.setItem('buttonsClicked', JSON.stringify(buttonsClicked));
-                    }
-                }, alreadyInvited++ * delayBetweenClicks);
-            }
-        });
-    } else if (buttonsFromNewInterface.length > 0) {
+    var isWorthClicking = function (item){
+
+        var resultHtml = item.parentElement.parentElement.parentElement.innerHTML
+        if(strContains(resultHtml,'recruit'))// this needs some work
+        {
+            return false;
+        }
+        if(item.querySelectorAll('message-anywhere-button').length > 0)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    if (buttonsFromNewInterface.length > 0) {
         delayBetweenClicks = 1500;
         buttonsFromNewInterface.forEach(function (item) {
             setTimeout(function () {
                 if (running) {
-                    clickSendNowButtonIfAvailable();
-                    item.focus();
-                    item.click();
-                    item.setAttribute("disabled", "true");
-                    item['innerText'] = "Invite Sent";
-                    clickSendNowButtonIfAvailable();
+                    
+                    if(isWorthClicking(item))
+                    {
+                        clickSendNowButtonIfAvailable();
+                        item.focus();
+                        item.click();
+                        item.setAttribute("disabled", "true");
+                        item['innerText'] = "Invite Sent";
+                        clickSendNowButtonIfAvailable();
+                    }
+                    else{
+                        item['innerText'] = (strContains(resultHtml,'recruit'))?"recruiter":"something else not worth clicking for";
+                    }
                 }
             }, alreadyInvited++ * delayBetweenClicks);
         });
@@ -82,11 +93,8 @@ var addPeopleFromSearchPage = function () {
         if (connectButtonsLeft) {
             addPeopleFromSearchPage();
         } else {
-            var nextButtonFromOldInterface = document.querySelector('.next > a');
             var nextButtonFromNewInterface = document.querySelector('button.next');
-            if (nextButtonFromOldInterface) {
-                nextButtonFromOldInterface.click();
-            } else if (nextButtonFromNewInterface) {
+             if (nextButtonFromNewInterface) {
                 nextButtonFromNewInterface.click();
             }
         }
@@ -102,8 +110,6 @@ var addPeopleFromPymkPage = function () {
 
     var alreadyInvited = 0;
 
-    var buttonsFromOldInterface = document.querySelectorAll('.bt-request-buffed');
-
     var buttonsFromNewInterface = document.querySelectorAll('button.button-secondary-small[data-control-name="invite"]');
 
     var functionToBeCalledOnButtons = function (item) {
@@ -116,9 +122,7 @@ var addPeopleFromPymkPage = function () {
         }, alreadyInvited++ * delayBetweenClicks);
     };
 
-    if (buttonsFromOldInterface.length > 0) {
-        buttonsFromOldInterface.forEach(functionToBeCalledOnButtons);
-    } else if (buttonsFromNewInterface.length > 0) {
+    if (buttonsFromNewInterface.length > 0) {
         buttonsFromNewInterface.forEach(functionToBeCalledOnButtons);
     }
 
@@ -132,11 +136,11 @@ var strContains = function (string, substring) {
 };
 
 var isOnSearchPage = function () {
-    return (strContains(location.href, "linkedin.com/vsearch/p") || strContains(location.href, "linkedin.com/search/results/people"));
+    return (strContains(location.href, "linkedin.com/search/results/people"));
 };
 
 var isOnPymkPage = function () {
-    return (strContains(location.href, "linkedin.com/people/pymk") || strContains(location.href, "linkedin.com/mynetwork"));
+    return (strContains(location.href, "linkedin.com/mynetwork"));
 };
 
 var arrayContains = function (needle, haystack) {
