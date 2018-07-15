@@ -73,6 +73,7 @@ var addPeopleFromSearchPage = function () {
                             console.log(item);
                         }
                         else{
+                            item.setAttribute("disabled", "true");
                             item['innerText'] = "recruiter";
                         }
                         
