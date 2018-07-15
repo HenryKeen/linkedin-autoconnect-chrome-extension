@@ -28,6 +28,7 @@ var addPeopleFromSearchPage = function () {
         var buttonSendNow = document.querySelector('div.send-invite__actions > button.button-primary-large.ml1:enabled');
         var buttonCancel = document.querySelector('div.send-invite__actions > send-invite__cancel-btn');
         if (buttonSendNow) {
+            //todo add a note here
             buttonSendNow.click();
         }
         else if(buttonCancel)
@@ -53,19 +54,32 @@ var addPeopleFromSearchPage = function () {
             setTimeout(function () {
                 if (running) {
                     
-                    if(isRecruiter(item))
-                    {
-                        clickSendNowButtonIfAvailable();
-                        item.focus();
-                        item.click();
-                        item.setAttribute("disabled", "true");
-                        item['innerText'] = "Invite Sent";
-                        clickSendNowButtonIfAvailable();
-                        console.log(item);
+                    try {
+                        console.log("Processing")
+                        if(isRecruiter(item))
+                        {
+                            console.log("Not a recruiter, let's crack on")
+                            console.log("Closing any dialog shizzle")
+                            clickSendNowButtonIfAvailable();
+                            
+                            console.log("Getting the focus and clicking connect")
+                            item.focus();
+                            item.click();
+                            console.log("Updating status")
+                            item.setAttribute("disabled", "true");
+                            item['innerText'] = "Invite Sent";
+                            console.log("Clicking send on any dialog")
+                            clickSendNowButtonIfAvailable();
+                            console.log(item);
+                        }
+                        else{
+                            item['innerText'] = "recruiter";
+                        }
+                        
+                    } catch (error) {
+                        console.error("Something fucked up! error:" + error)
                     }
-                    else{
-                        item['innerText'] = "recruiter";
-                    }
+                 
                 }
             }, alreadyInvited++ * delayBetweenClicks);
         });
@@ -84,7 +98,7 @@ var addPeopleFromSearchPage = function () {
             }
         });
 
-        if (document.querySelectorAll('button.search-result__actions--primary.m5:enabled').length > 0) {
+        if (document.querySelectorAll('button.search-result__actions--primary.m5:enabled:not(.message-anywhere-button)').length > 0) {
             connectButtonsLeft = true;
         }
 
